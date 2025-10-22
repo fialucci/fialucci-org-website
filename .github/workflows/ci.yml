@@ -33,7 +33,7 @@ jobs:
         run: npm run typecheck
       - name: Test
         run: npm test
-      - name: Build (prod)
+      - name: Build (prod + pages)
         run: npm run build:pages
       - name: Record build hash
         run: |
@@ -65,24 +65,21 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      # We rely on predeploy hook to rebuild; no need to download artifact
       - name: Configure git user
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Deploy to gh-pages (unified script)
+      - name: Deploy via gh-pages script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: npm run deploy
-      - name: Fetch gh-pages & show latest commit
+      - name: Verify gh-pages branch
         run: |
-          git fetch origin gh-pages --depth=5
+          git fetch origin gh-pages --depth=5 || true
           echo "Recent gh-pages commits:" && git log --oneline -n 3 origin/gh-pages || echo "No gh-pages commits yet"
-      - name: List published files (from dist)
-        run: |
-          echo "Local dist directory (published):" && find dist -maxdepth 2 -type f -print
-      - name: Confirm deployed branch ref
-        run: git ls-remote --heads origin gh-pages
+          echo "Published files (remote tree):" && git ls-tree --name-only -r origin/gh-pages | head -n 50 || true
       - name: Guidance
         run: |
-          echo "If site not updated:" && echo "1. Ensure Pages source set to gh-pages / root." && echo "2. Wait 1-2 minutes; hard refresh (Cmd/Ctrl+Shift+R)." && echo "3. Verify commit above matches remote."
+          echo "If site not updated:" && echo "1. Check Pages settings -> Source: gh-pages / root" && echo "2. Wait 1-2 minutes & hard refresh" && echo "3. Confirm commit above matches latest gh-pages"

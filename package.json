@@ -22,7 +22,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "deploy": "npm run build:pages && gh-pages -b gh-pages -d dist --dotfiles $( [ -n \"$GITHUB_TOKEN\" ] && echo -r https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git ) -m \"deploy: $(date -u +%Y-%m-%dT%H:%M:%SZ)\""
+    "predeploy": "npm run build:pages",
+    "deploy": "node scripts/deploy-gh-pages.mjs"
   },
   "engines": {
     "node": ">=18.18.0"
