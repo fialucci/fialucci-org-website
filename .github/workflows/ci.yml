@@ -69,11 +69,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Deploy to gh-pages
+      - name: Deploy to gh-pages (unified script)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: npm run deploy:ci
+        run: npm run deploy
       - name: Fetch gh-pages & show latest commit
         run: |
           git fetch origin gh-pages --depth=5
@@ -85,7 +85,4 @@ jobs:
         run: git ls-remote --heads origin gh-pages
       - name: Guidance
         run: |
-          echo "If site not updated:"
-          echo "1. Ensure Pages source set to gh-pages / root in repository settings."
-          echo "2. Wait ~1-2 minutes; then hard refresh browser (Cmd/Ctrl+Shift+R)."
-          echo "3. Verify commit listed above matches gh-pages branch on GitHub."
+          echo "If site not updated:" && echo "1. Ensure Pages source set to gh-pages / root." && echo "2. Wait 1-2 minutes; hard refresh (Cmd/Ctrl+Shift+R)." && echo "3. Verify commit above matches remote."
