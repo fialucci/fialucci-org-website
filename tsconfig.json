@@ -17,6 +17,6 @@
     "jsx": "react-jsx",
     "types": ["vitest", "node"]
   },
-  "include": ["src", "setupTests.ts", "vite.config.ts"],
+  "include": ["src", "setupTests.ts", "vite.config.ts", "vitest.config.ts"],
   "references": []
 }

@@ -9,11 +9,5 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     target: 'esnext'
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./setupTests.ts'],
-    include: ['src/**/*.test.{ts,tsx}']
   }
 });
