@@ -1,0 +1,20 @@
+# Node
+node_modules/
+
+# Build output
+/dist
+
+# Logs
+*.log
+
+# Editor
+.idea/
+.vscode/
+.DS_Store
+
+# Tests coverage
+coverage/
+
+# Misc
+*.local
+
