@@ -43,25 +43,20 @@ Modern React + Vite + TypeScript starter for the Fialucci organization website.
 | `npm run typecheck` | Run TypeScript type checking (no emit) |
 | `npm run deploy` | Build and publish `dist/` to GitHub Pages |
 
-## 🔍 Preview Modes
+## 🔍 Preview & Base Configuration
 
-You can preview the production build in two ways:
+The Vite `base` is now set to a relative path (`./`). This means:
+- Development (`npm run dev`): served at `http://localhost:5173/`.
+- Production build (`npm run build` or `npm run build:pages`): asset references are relative (`./assets/...`).
+- Works seamlessly whether hosted at a project subfolder (e.g. `https://fialucci.github.io/fialucci-org-website/`) or a custom/root domain later.
 
-- Production path (mirrors GitHub Pages):
-  ```bash
-  npm run build
-  npm run preview   # opens /fialucci-org-website/
-  ```
-  Visit the opened URL (subfolder). The `index.html` only contains `<div id="root"></div>` server-side; React mounts client-side via the generated JS in `dist/assets/*`.
+If you rename the repository (e.g. to `fialucci.github.io`) or add a custom domain, you do NOT need to change the base again.
 
-- Local root path (no subfolder):
-  ```bash
-  npm run build:local   # forces base '/'
-  npm run preview:local # opens '/'
-  ```
-  Use this if you want to test the app exactly at the site root.
-
-If you see only the raw HTML, confirm you opened the correct path matching the build base.
+Preview locally:
+```bash
+npm run build
+npm run preview   # opens http://localhost:4173/
+```
 
 ## 🚀 Getting Started
 
@@ -87,14 +82,21 @@ npm run deploy
 
 Then open `http://localhost:5173` (default Vite port) during development.
 
-## 🌐 GitHub Pages Deployment & Local Base Path
+## 🚢 Deployment (GitHub Pages)
 
-Vite `base` is conditional in `vite.config.ts`:
-- Dev (`npm run dev`): `base` is `/` so the app is served at `http://localhost:5173/`.
-- Production build (`npm run build`): `base` becomes `/fialucci-org-website/` for GitHub Pages hosting at `https://fialucci.github.io/fialucci-org-website/`.
+Deployment uses `gh-pages` to publish `dist/` to the `gh-pages` branch with a SPA fallback (`404.html`). Because assets are relative, no repository path is hard-coded in the bundles.
 
-Therefore during local development do NOT visit `http://localhost:5173/fialucci-org-website/` (it will be blank); use `http://localhost:5173/`.
-If you prefer always using the subfolder locally, set a static `base: '/fialucci-org-website/'` in `vite.config.ts`.
+Scripts:
+| Script | Purpose |
+|--------|---------|
+| `npm run build:pages` | Build + create `404.html` for SPA routing |
+| `npm run deploy` | Build pages (via `predeploy`) and publish to `gh-pages` branch |
+
+To remove the subfolder from the public URL entirely you must either:
+1. Rename the repository to `fialucci.github.io` (user page root). OR
+2. Configure a custom domain (add a `CNAME` file and DNS records). We can automate this if you provide the domain.
+
+After either change, the relative base continues to work without modification.
 
 ## 🗂 Project Structure
 
@@ -189,49 +191,3 @@ Licensed under the MIT License. See [LICENSE](./LICENSE).
 ## 📣 Acknowledgements
 
 Built with love using React, Vite, and the open source ecosystem.
-
-## 🚢 Deployment (GitHub Pages)
-
-This project uses the `gh-pages` package to publish the `dist/` output to the `gh-pages` branch (configurable) and includes a SPA fallback (`404.html`).
-
-Scripts:
-
-| Script | Purpose |
-|--------|---------|
-| `npm run build` | Standard production build (outputs `dist/`) |
-| `npm run build:pages` | Build + create `404.html` for SPA routing |
-| `npm run deploy` | Runs `predeploy` (so `build:pages`) then publishes `dist/` to `gh-pages` branch |
-| `npm run deploy:clean` | Delete `dist/` then run deploy |
-
-How it works:
-1. `build:pages` runs the Vite build, then `scripts/copy404.mjs` duplicates `index.html` to `404.html`.
-2. `gh-pages` CLI force-updates (by default) the target branch with the contents of `dist/`.
-3. GitHub Pages (Settings → Pages) should be set to source: `gh-pages` branch / root.
-4. Because the build uses a relative base (`./`), assets resolve correctly at the project subpath URL.
-
-Initial setup:
-```bash
-# Ensure repository is created and remote set
-git remote -v
-# First deployment
-npm run deploy
-```
-
-Visit: `https://fialucci.github.io/fialucci-org-website/`
-
-Customizing:
-- Change branch: edit `"deploy": "gh-pages -b my-branch -d dist --dotfiles"`.
-- Absolute base (optional): set `base: '/fialucci-org-website/'` in `vite.config.ts` if you need asset URLs fixed to the subfolder (then keep `homepage` aligned). Remove relative base if you do this.
-- Disable SPA fallback: remove the `build:pages` / `copy404.mjs` step and point GitHub Pages to a multi-page structure.
-
-Troubleshooting:
-- White page: open DevTools → Network; if JS bundle 404s, check base configuration.
-- 404 on refresh of a client route: ensure `404.html` exists in `gh-pages` branch.
-- Stale content: GitHub Pages caching can take up to a minute; hard refresh (Ctrl/Cmd+Shift+R).
-- Wrong branch: verify with `git ls-remote --heads origin gh-pages`.
-
-Optional improvements (ask to enable):
-- GitHub Actions workflow that runs build & deploy automatically on push to `main`.
-- Cache busting badges (commit SHA in footer).
-- Bundle analysis (e.g. `rollup-plugin-visualizer`).
-
