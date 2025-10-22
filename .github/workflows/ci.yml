@@ -34,7 +34,11 @@ jobs:
       - name: Test
         run: npm test
       - name: Build (prod)
-        run: npm run build
+        run: npm run build:pages
+      - name: Record build hash
+        run: |
+          sha256sum dist/assets/index-*.js | awk '{print $1}' > dist/build-sha.txt || true
+          echo "Build JS hash:" && cat dist/build-sha.txt || true
       - name: Upload dist artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -70,5 +74,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: npm run deploy:ci
-      - name: Confirm deployed branch
+      - name: Fetch gh-pages & show latest commit
+        run: |
+          git fetch origin gh-pages --depth=5
+          echo "Recent gh-pages commits:" && git log --oneline -n 3 origin/gh-pages || echo "No gh-pages commits yet"
+      - name: List published files (from dist)
+        run: |
+          echo "Local dist directory (published):" && find dist -maxdepth 2 -type f -print
+      - name: Confirm deployed branch ref
         run: git ls-remote --heads origin gh-pages
+      - name: Guidance
+        run: |
+          echo "If site not updated:"
+          echo "1. Ensure Pages source set to gh-pages / root in repository settings."
+          echo "2. Wait ~1-2 minutes; then hard refresh browser (Cmd/Ctrl+Shift+R)."
+          echo "3. Verify commit listed above matches gh-pages branch on GitHub."
