@@ -74,10 +74,16 @@ try {
   log('Failed to write deploy-meta.json (continuing)');
 }
 
+// Determine publish branch dynamically (user pages use main/root repo)
+const repoName = repoSlug.split('/')[1] || repoSlug;
+const isUserPageRepo = /\.github\.io$/i.test(repoName);
+const targetBranch = isUserPageRepo ? 'main' : 'gh-pages';
+log(`Target branch resolved: ${targetBranch} (repoName=${repoName}, userPage=${isUserPageRepo})`);
+
 log(`Publishing with message: ${commitMessage}`);
 
 ghpages.publish(distDir, {
-  branch: 'gh-pages',
+  branch: targetBranch,
   repo: repoUrl,
   message: commitMessage,
   dotfiles: true,

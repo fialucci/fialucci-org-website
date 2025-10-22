@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/fialucci/fialucci-org-website/issues"
   },
-  "homepage": "https://fialucci.github.io/fialucci-org-website/",
+  "homepage": "https://fialucci.github.io/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
