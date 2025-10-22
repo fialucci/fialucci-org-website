@@ -48,7 +48,7 @@ Modern React + Vite + TypeScript starter for the Fialucci organization website.
 The Vite `base` is now set to a relative path (`./`). This means:
 - Development (`npm run dev`): served at `http://localhost:5173/`.
 - Production build (`npm run build` or `npm run build:pages`): asset references are relative (`./assets/...`).
-- Works seamlessly whether hosted at a project subfolder (e.g. `https://fialucci.github.io/fialucci-org-website/`) or a custom/root domain later.
+- Works seamlessly whether hosted at a project subfolder (e.g. `https://fialucci.github.io/`) or a custom/root domain later.
 
 If you rename the repository (e.g. to `fialucci.github.io`) or add a custom domain, you do NOT need to change the base again.
 
