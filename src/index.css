@@ -110,6 +110,7 @@ img, svg { display: block; max-width: 100%; }
 .md hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 .md-meta { margin: -.5rem 0 1.5rem; font-size: .75rem; letter-spacing: .05rem; text-transform: uppercase; color: var(--text-dim); }
 .md-body > :last-child { margin-bottom: 0; }
+.md-body .math-block { text-align: center; margin: 1.25rem 0; }
 
 @media (max-width: 640px) {
   .nav__links { gap: .9rem; }

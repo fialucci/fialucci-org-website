@@ -1,6 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
+import type { TokenizerAndRendererExtension } from 'marked';
 
 interface MarkdownPageProps {
   raw: string;
@@ -15,6 +18,54 @@ interface Frontmatter {
   lastUpdated?: string;
   description?: string;
   [key: string]: string | undefined;
+}
+
+interface MathToken {
+  type: 'blockMath' | 'inlineMath';
+  raw: string;
+  text: string;
+}
+
+// Register math extensions once
+let mathRegistered = false;
+function registerMath() {
+  if (mathRegistered) return;
+  // Block math $$...$$
+  const blockMath: TokenizerAndRendererExtension = {
+    name: 'blockMath',
+    level: 'block',
+    start(src: string) { return src.match(/\$\$/)?.index; },
+    tokenizer(src: string) {
+      const match = src.match(/^\$\$([\s\S]+?)\$\$/);
+      if (match) {
+        const token: MathToken = { type: 'blockMath', raw: match[0], text: match[1].trim() };
+        return token; // explicit MathToken
+      }
+    },
+    renderer(token: unknown) {
+      const t = token as MathToken;
+      return `<div class=\"math-block\">${katex.renderToString(t.text, { throwOnError: false, displayMode: true })}</div>`;
+    }
+  };
+  // Inline math $...$
+  const inlineMath: TokenizerAndRendererExtension = {
+    name: 'inlineMath',
+    level: 'inline',
+    start(src: string) { return src.match(/\$(?!\$)/)?.index; },
+    tokenizer(src: string) {
+      const match = src.match(/^\$(.+?)\$/); // non-greedy
+      if (match) {
+        const token: MathToken = { type: 'inlineMath', raw: match[0], text: match[1].trim() };
+        return token;
+      }
+    },
+    renderer(token: unknown) {
+      const t = token as MathToken;
+      return katex.renderToString(t.text, { throwOnError: false });
+    }
+  };
+  marked.use({ extensions: [blockMath, inlineMath] });
+  mathRegistered = true;
 }
 
 function parseFrontmatter(raw: string): { data: Frontmatter; content: string } {
@@ -46,6 +97,7 @@ export function MarkdownPage({ raw, className = 'md' }: MarkdownPageProps) {
 
   // Render markdown -> HTML then sanitize.
   const html = useMemo(() => {
+    registerMath();
     marked.setOptions({ gfm: true, breaks: false });
     const rendered = marked.parse(content) as string;
     return typeof window !== 'undefined'
