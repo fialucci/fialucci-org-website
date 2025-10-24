@@ -7,14 +7,23 @@ interface MarkdownPageProps {
   className?: string;
 }
 
-// Lightweight frontmatter parser (YAML key: value, single-level) to avoid gray-matter Buffer dependency.
-function parseFrontmatter(raw: string): { data: Record<string, any>; content: string } {
+// Frontmatter keys we currently support (extendable). All values parsed as strings.
+interface Frontmatter {
+  title?: string;
+  version?: string;
+  status?: string;
+  lastUpdated?: string;
+  description?: string;
+  [key: string]: string | undefined;
+}
+
+function parseFrontmatter(raw: string): { data: Frontmatter; content: string } {
   if (!raw.startsWith('---')) return { data: {}, content: raw };
   const end = raw.indexOf('\n---');
   if (end === -1) return { data: {}, content: raw };
   const fmBlock = raw.slice(3, end).trim();
   const content = raw.slice(end + 4).replace(/^\n+/, '');
-  const data: Record<string, any> = {};
+  const data: Frontmatter = {};
   fmBlock.split(/\n/).forEach(line => {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) return;
