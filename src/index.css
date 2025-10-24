@@ -59,6 +59,10 @@ img, svg { display: block; max-width: 100%; }
 .section--alt { background: var(--bg-alt); padding: 2.25rem 2rem; border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
 .section__title { margin: 0; font-size: 1.55rem; line-height: 1.2; font-weight: 600; letter-spacing: .3px; color: var(--navy); }
 .section__body { font-size: 1rem; line-height: 1.55; color: var(--text-dim); }
+/* Tighten paragraph spacing inside sections */
+.section__body p { margin: 0 0 .85rem; }
+.section__body p + p { margin-top: 0; }
+.section__body p:first-child { margin-bottom: 0; }
 
 .grid-cols { display: grid; gap: 1.1rem; }
 @media (min-width: 840px) { .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); } }
