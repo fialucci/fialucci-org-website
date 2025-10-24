@@ -29,34 +29,39 @@ Modern React + Vite + TypeScript starter for the Fialucci organization website.
 | Deployment   | gh-pages |
 | CI           | GitHub Actions |
 
-## 🔧 Scripts
+## 🛠 Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start local dev server with HMR |
+| Command | Description                                          |
+|---------|------------------------------------------------------|
+| `npm run dev` | Start local dev server with HMR (opens `/`)          |
 | `npm run build` | Type-check then build production bundle into `dist/` |
-| `npm run preview` | Preview the production build locally |
-| `npm run test` | Run test suite once |
-| `npm run test:watch` | Run tests in watch (interactive) mode |
-| `npm run lint` | Lint all TypeScript/TSX files |
-| `npm run format` | Format codebase with Prettier |
-| `npm run typecheck` | Run TypeScript type checking (no emit) |
-| `npm run deploy` | Build and publish `dist/` to GitHub Pages |
+| `npm run build:pages` | Build + create `404.html` (SPA fallback)             |
+| `npm run preview` | Preview the production build locally                 |
+| `npm run test` | Run test suite once                                  |
+| `npm run test:watch` | Run tests in watch mode                              |
+| `npm run lint` | Lint all TypeScript/TSX files                        |
+| `npm run format` | Format codebase with Prettier                        |
+| `npm run typecheck` | Run TypeScript type checking (no emit)               |
+| `npm run deploy` | Build and publish `dist/` to GitHub Pages                      |
 
-## 🔍 Preview & Base Configuration
+## 🔎 Base Path & Deployment
 
-The Vite `base` is now set to a relative path (`./`). This means:
-- Development (`npm run dev`): served at `http://localhost:5173/`.
-- Production build (`npm run build` or `npm run build:pages`): asset references are relative (`./assets/...`).
-- Works seamlessly whether hosted at a project subfolder (e.g. `https://fialucci.github.io/`) or a custom/root domain later.
-
-If you rename the repository (e.g. to `fialucci.github.io`) or add a custom domain, you do NOT need to change the base again.
-
-Preview locally:
-```bash
-npm run build
-npm run preview   # opens http://localhost:4173/
+This repository is published as a GitHub Pages **project site** at:
 ```
+https://fialucci.github.io/
+```
+The site’s Vite `base` is set to `/` for local development convenience. On GitHub Pages your content is served **under the repository path** (`/fialucci-org-website/`).
+
+Deep links MUST include the repository segment in production:
+```
+Production whitepaper: https://fialucci.github.io/whitepaper
+```
+Visiting `https://fialucci.github.io/whitepaper` will 404 because that path is outside the project scope; the SPA fallback cannot trigger since the bundle is not loaded there.
+
+If you later move to a custom domain or convert this to a user/org page, you can keep `base: '/'` unchanged. For project subfolder hosting this setup still works because all runtime links are absolute from root with the project path included when served by Pages.
+
+### Changing the Base
+If you want to force asset URLs to include the repo segment during build, set `base: '/fialucci-org-website/'` in `vite.config.ts`. Otherwise leave it at `/` and let Pages mount the SPA under the subfolder.
 
 ## 🚀 Getting Started
 
@@ -79,24 +84,19 @@ npm run build
 # Deploy to GitHub Pages (ensure repo has pages configured)
 npm run deploy
 ```
+Open `http://localhost:5173` during development.
 
-Then open `http://localhost:5173` (default Vite port) during development.
+## 📄 Whitepaper
 
-## 🚢 Deployment (GitHub Pages)
-
-Deployment uses `gh-pages` to publish `dist/` to the `gh-pages` branch with a SPA fallback (`404.html`). Because assets are relative, no repository path is hard-coded in the bundles.
-
-Scripts:
-| Script | Purpose |
-|--------|---------|
-| `npm run build:pages` | Build + create `404.html` for SPA routing |
-| `npm run deploy` | Build pages (via `predeploy`) and publish to `gh-pages` branch |
-
-To remove the subfolder from the public URL entirely you must either:
-1. Rename the repository to `fialucci.github.io` (user page root). OR
-2. Configure a custom domain (add a `CNAME` file and DNS records). We can automate this if you provide the domain.
-
-After either change, the relative base continues to work without modification.
+The protocol whitepaper is maintained as Markdown (`src/content/whitepaper/index.md`) and rendered at the SPA route:
+```
+/whitepaper
+```
+Key points:
+- No `.html` extension required; route-based rendering loads markdown dynamically.
+- Production deep link: `https://fialucci.github.io/fialucci-org-website/whitepaper`
+- If a static file variant (e.g. `whitepaper.html`) appears, it’s legacy and can be removed; current build relies solely on the route.
+- Update the markdown file and rebuild to deploy new content.
 
 ## 🗂 Project Structure
 

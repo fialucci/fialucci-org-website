@@ -39,6 +39,16 @@ jobs:
         run: |
           sha256sum dist/assets/index-*.js | awk '{print $1}' > dist/build-sha.txt || true
           echo "Build JS hash:" && cat dist/build-sha.txt || true
+      - name: Verify build artifacts
+        run: |
+          test -f dist/index.html || (echo 'index.html missing' && exit 1)
+          test -f dist/404.html || (echo '404.html missing' && exit 1)
+          # Ensure legacy static whitepaper file NOT present (we now use route rendering)
+          if [ -f dist/whitepaper.html ]; then echo 'Unexpected whitepaper.html found' && exit 1; fi
+          # Basic check that markdown source still contains the expected H1
+          grep -q 'Fialucci Whitepaper' src/content/whitepaper/index.md || (echo 'Whitepaper markdown missing title' && exit 1)
+          # Show recorded hash if present
+          if [ -f dist/build-sha.txt ]; then echo 'Recorded build hash:' && cat dist/build-sha.txt; fi
       - name: Upload dist artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -73,6 +83,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Build for Pages
+        run: npm run build:pages
       - name: Deploy via gh-pages script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

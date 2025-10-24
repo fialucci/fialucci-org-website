@@ -13,7 +13,7 @@
   },
   "homepage": "https://fialucci.github.io/",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open /",
     "build": "tsc && vite build",
     "build:pages": "npm run build && node scripts/copy404.mjs",
     "preview": "vite preview --open /",
@@ -29,6 +29,8 @@
     "node": ">=18.18.0"
   },
   "dependencies": {
+    "dompurify": "^3.3.0",
+    "marked": "^16.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

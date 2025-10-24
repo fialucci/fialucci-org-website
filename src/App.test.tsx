@@ -13,3 +13,9 @@ describe('App landing page layout', () => {
     expect(screen.getByRole('link', { name: /fialucci homepage/i })).toBeInTheDocument();
   });
 });
+
+describe('Whitepaper route rendering', () => {
+  function renderAt(path: string) { window.history.pushState({}, '', path); render(<App />); }
+  it('renders whitepaper at /whitepaper', () => { renderAt('/whitepaper'); expect(screen.getByRole('heading', { name: /fialucci whitepaper/i })).toBeInTheDocument(); });
+  it('sets document title for whitepaper', () => { renderAt('/whitepaper'); expect(document.title).toMatch(/Fialucci Whitepaper/i); });
+});

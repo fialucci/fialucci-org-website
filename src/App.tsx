@@ -1,5 +1,7 @@
 import {useEffect} from 'react';
 import {Section} from './components/Section';
+import {MarkdownPage} from './components/MarkdownPage';
+import whitepaperRaw from './content/whitepaper/index.md?raw';
 
 // Simple site metadata (frontmatter analogue)
 const SITE_META = {
@@ -9,9 +11,38 @@ const SITE_META = {
 };
 
 export default function App() {
+  const path = typeof window !== 'undefined' ? window.location.pathname : '/';
+  const isWhitepaper = /\/whitepaper(\/|$)?$/.test(path);
   useEffect(() => {
-    document.title = `${SITE_META.title} – Trust Before Transfer`;
-  }, []);
+    if (!isWhitepaper) document.title = `${SITE_META.title} – Trust Before Transfer`;
+  }, [isWhitepaper]);
+
+  if (isWhitepaper) {
+    return (
+      <div className="site">
+        <a href="#main" className="skip-link">Skip to content</a>
+        <nav className="nav" aria-label="Global">
+          <div className="nav__inner">
+            <a href={SITE_META.slug} className="nav__brand" aria-label="Fialucci homepage"><span>Fialucci</span></a>
+            <div className="nav__links">
+              <a href="/whitepaper" aria-current="page">Whitepaper</a>
+              <a href="/docs">Docs</a>
+              <a href="/community">Community</a>
+              <a href="https://github.com/fialucci" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </div>
+        </nav>
+        <main id="main" className="main">
+          <div className="sections">
+            <MarkdownPage raw={whitepaperRaw}/>
+          </div>
+        </main>
+        <footer className="footer" role="contentinfo">
+          <div className="footer__inner"><p>© Fialucci Foundation.</p></div>
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <div className="site">
@@ -21,8 +52,8 @@ export default function App() {
       {/* Sticky Protocol Nav */}
       <nav className="nav" aria-label="Global">
         <div className="nav__inner">
-          <a href={SITE_META.slug} className="nav__brand" aria-label={`${SITE_META.title} homepage`}>
-            <span>{SITE_META.title}</span>
+          <a href={SITE_META.slug} className="nav__brand" aria-label="Fialucci homepage">
+            <span>Fialucci</span>
           </a>
           <div className="nav__links">
             <a href="/whitepaper">Whitepaper</a>
@@ -56,8 +87,9 @@ export default function App() {
         <div className="sections" role="region" aria-label="Protocol overview sections">
           {/* What */}
           <Section id="what" title="What is Fialucci?">
-            <p>Fialucci makes <strong>escrow a native feature of the blockchain itself</strong>. Funds are <strong>locked, validated, and released automatically</strong> when verifiable on-chain or
-              off-chain conditions are met.</p>
+            <p>Fialucci makes <strong>escrow a native feature of the blockchain itself</strong>. Funds are <strong>locked,
+              validated, and released automatically</strong> when verifiable on-chain or off-chain conditions are met.
+            </p>
           </Section>
 
           {/* Principles */}
@@ -87,7 +119,7 @@ export default function App() {
               payouts, rewards, marketplaces, logistics.
             </p>
             <ul className="inline-links" aria-label="Developer resources">
-              <li><a href="/docs">Quick Start: Docs</a></li>
+              <li><a href="docs">Quick Start: Docs</a></li>
               <li><a href="https://github.com/fialucci" target="_blank" rel="noopener noreferrer">Repos: GitHub</a></li>
             </ul>
           </Section>
@@ -104,9 +136,9 @@ export default function App() {
           <Section id="learn" title="Learn More" kind="alt">
             <ul className="learn-list">
               <li><a href="/whitepaper">Whitepaper</a></li>
-              <li><a href="/docs/protocol">Protocol Overview</a></li>
-              <li><a href="/docs/tokenomics">Tokenomics</a></li>
-              <li><a href="/community">Community</a></li>
+              <li><a href="docs/protocol">Protocol Overview</a></li>
+              <li><a href="docs/tokenomics">Tokenomics</a></li>
+              <li><a href="community">Community</a></li>
               <li><a href="https://github.com/fialucci" target="_blank" rel="noopener noreferrer">GitHub</a></li>
             </ul>
           </Section>
